@@ -11,7 +11,7 @@ owners:
     identifier: 4add5496-18af-4d7b-b095-58eba1fa2dc3   # sg-fabric-workspace-provisioner
     role: Admin
   - principalType: User
-    identifier: frteix@microsoft.com
+    identifier: e122d065-3015-45cb-941a-37c91f505607   # frteix@microsoft.com (guest)
     role: Member
 tags:
   managedBy: fabric-workspace-governance
