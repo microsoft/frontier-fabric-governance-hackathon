@@ -1,0 +1,50 @@
+name: validate
+
+on:
+  pull_request:
+    paths:
+      - 'workspaces/**'
+      - 'rules/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - '.github/workflows/validate.yml'
+
+permissions:
+  contents: read
+  id-token: write       # OIDC for live tenant checks
+  pull-requests: write  # sticky PR comment
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r scripts/requirements.txt
+
+      - name: Azure login (OIDC, optional live checks)
+        uses: azure/login@v2
+        continue-on-error: true
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Validate
+        env:
+          LIVE_CHECKS: ${{ vars.LIVE_CHECKS || 'false' }}
+        run: python scripts/validate.py --changed-only
+
+      - name: Sticky PR comment
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: workspace-validation
+          path: validation-report.md

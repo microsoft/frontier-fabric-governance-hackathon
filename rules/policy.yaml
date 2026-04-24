@@ -1,0 +1,79 @@
+# Declarative policy rules for Fabric workspace requests.
+# Edit this file to evolve governance without changing scripts.
+
+approvedCapacities:
+  # logical name -> { workspaceId target, allowed environments, region }
+  frteix-f2-northeurope:
+    capacityId: "332357e4-8633-4acd-8d09-a1dc6fe85081"
+    region: northeurope
+    allowedEnvironments: [dev, sbx, stg, prd]
+    sku: F2
+
+approvedDomains:
+  - Platform
+  - Finance
+  - Sales
+  - Engineering
+
+approvedSensitivityLabels:
+  - Public
+  - General
+  - Confidential
+  - "Highly Confidential"
+
+approvedCostCenters:
+  - CC-1001
+  - CC-2042
+  - CC-9999
+
+quotas:
+  # Max workspaces per owning group per environment
+  perGroupPerEnv:
+    dev: 25
+    sbx: 50
+    stg: 10
+    prd: 5
+
+rules:
+  - id: naming-convention
+    severity: block
+    description: "Name must match <env>-<bu>-<purpose> pattern"
+  - id: env-prefix-matches-environment
+    severity: block
+    description: "Name prefix must match `environment` field"
+  - id: capacity-allow-list
+    severity: block
+    description: "`capacity` must reference an entry in approvedCapacities"
+  - id: capacity-allowed-for-env
+    severity: block
+    description: "Selected capacity must permit this environment"
+  - id: region-matches-capacity
+    severity: block
+    description: "`region` must match the capacity's region"
+  - id: owners-min-two-groups
+    severity: block
+    description: "At least 2 owners and at least one must be a Group"
+  - id: owners-have-admin
+    severity: block
+    description: "At least one owner must have role=Admin"
+  - id: owner-groups-exist
+    severity: block
+    description: "Each Group owner must exist in Entra"
+  - id: domain-allow-list
+    severity: warn
+    description: "If `domain` is set, must be in approvedDomains"
+  - id: sensitivity-required
+    severity: block
+    description: "`sensitivityLabel` is required and must be in approvedSensitivityLabels"
+  - id: cost-center-allow-list
+    severity: block
+    description: "`costCenter` must be in approvedCostCenters"
+  - id: description-quality
+    severity: block
+    description: "`description` must be >= 30 chars"
+  - id: no-personal-workspaces
+    severity: block
+    description: "Reject names containing 'my', 'personal', 'sandbox-<user>'"
+  - id: prod-extra-controls
+    severity: block
+    description: "prd-* must use Confidential or higher sensitivity and >=2 group owners"

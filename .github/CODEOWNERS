@@ -1,0 +1,11 @@
+# Default reviewer for all changes
+*                       @frteix_microsoft
+
+# Policy / schema / scripts require platform owner review
+/rules/                 @frteix_microsoft
+/schemas/               @frteix_microsoft
+/scripts/               @frteix_microsoft
+/.github/               @frteix_microsoft
+
+# Production workspace requests need extra scrutiny
+/workspaces/prd-*.yaml  @frteix_microsoft
