@@ -1,0 +1,18 @@
+name: dev-plt-sample-hello
+environment: dev
+description: "Sample workspace created via PR-based governance to validate the end-to-end approval and provisioning workflow."
+capacity: frteix-f2-northeurope
+region: northeurope
+domain: Platform
+sensitivityLabel: General
+costCenter: CC-1001
+owners:
+  - principalType: Group
+    identifier: 4add5496-18af-4d7b-b095-58eba1fa2dc3   # sg-fabric-workspace-provisioner
+    role: Admin
+  - principalType: User
+    identifier: frteix@microsoft.com
+    role: Member
+tags:
+  managedBy: fabric-workspace-governance
+  owner: frteix

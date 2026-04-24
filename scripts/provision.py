@@ -40,10 +40,11 @@ def resolve_capacity_id(logical_name: str, policy: dict) -> str:
     cap_id = cfg.get("capacityId")
     if cap_id and cap_id != "FILL-ME-AT-FIRST-RUN":
         return cap_id
-    # Look up by display name == logical_name's "<env>-<sku>-<region>" or use env var fallback
     fallback = os.environ.get("FABRIC_CAPACITY_ID")
     if fallback:
         return fallback
+    if DRY_RUN:
+        return "<unresolved-dry-run>"
     looked = fab.find_capacity_id_by_display_name(logical_name.split("-", 1)[0]) or \
              fab.find_capacity_id_by_display_name(logical_name)
     if looked:
@@ -60,6 +61,13 @@ def reconcile_workspace(manifest: dict, policy: dict) -> None:
     cap_id = resolve_capacity_id(manifest["capacity"], policy)
 
     log(f"--- {name} ---")
+    if DRY_RUN:
+        log(f"  [dry-run] would ensure workspace exists with capacity={cap_id}")
+        log(f"  [dry-run] would set description: {desc[:60]}...")
+        for o in manifest.get("owners", []):
+            log(f"  [dry-run] would assign role {o['role']} to {o['principalType']} {o['identifier']}")
+        return
+
     existing = fab.get_workspace_by_name(name)
     if existing is None:
         log(f"  creating workspace (capacity={cap_id})")

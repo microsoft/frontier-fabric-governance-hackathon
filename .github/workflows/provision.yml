@@ -21,11 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - run: pip install -r scripts/requirements.txt
+      - name: Setup Python venv
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet --upgrade pip
+          .venv/bin/pip install --quiet -r scripts/requirements.txt
+          echo "/Users/fratei/Library/Mobile Documents/com~apple~CloudDocs/Projects/fabric-skills/fabric-workspace-governance/.venv/bin" >> $GITHUB_PATH
 
       - name: Azure login (OIDC)
         uses: azure/login@v2
