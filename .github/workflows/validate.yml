@@ -27,7 +27,7 @@ jobs:
           python3 -m venv .venv
           .venv/bin/pip install --quiet --upgrade pip
           .venv/bin/pip install --quiet -r scripts/requirements.txt
-          echo "$PWD/.venv/bin" >> $GITHUB_PATH
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
 
       - name: Azure login (OIDC, optional live checks)
         uses: azure/login@v2
