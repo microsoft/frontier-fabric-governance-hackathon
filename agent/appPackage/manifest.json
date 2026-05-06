@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.19",
+  "version": "1.0.0",
+  "id": "b2725383-3f2a-449c-ae3a-34e41319c454",
+  "developer": {
+    "name": "Platform Data Engineering",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Workspace Provisioner",
+    "full": "Fabric Workspace Provisioner"
+  },
+  "description": {
+    "short": "Request a new Microsoft Fabric workspace.",
+    "full": "Guides employees through requesting a new Microsoft Fabric workspace. Enforces MEO naming, approved domains, capacity rules, and ownership policy. Submits the request as a governance pull request in GitHub."
+  },
+  "accentColor": "#2A6DF4",
+  "copilotAgents": {
+    "declarativeAgents": [
+      {
+        "id": "fabricWorkspaceProvisioner",
+        "file": "declarativeAgent.json"
+      }
+    ]
+  },
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}

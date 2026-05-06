@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "githubAppId": {
+      "value": "${GITHUB_APP_ID}"
+    },
+    "githubInstallationId": {
+      "value": "${GITHUB_INSTALLATION_ID}"
+    },
+    "githubOwner": {
+      "value": "${GITHUB_OWNER}"
+    },
+    "githubRepo": {
+      "value": "${GITHUB_REPO=fabric-workspace-governance}"
+    },
+    "githubBaseBranch": {
+      "value": "${GITHUB_BASE_BRANCH=main}"
+    },
+    "keyVaultAdminPrincipalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
+    }
+  }
+}

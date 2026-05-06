@@ -1,0 +1,10 @@
+# Name: Policy Cache
+# Caches the result of the Get Policy action for the conversation lifetime
+# so we don't re-call /api/policy on every turn.
+name: PolicyCache
+aIVisibility: UseInAIContext
+scope: Conversation
+description: Cached governance allow-lists from /api/policy.
+schemaName: crXXX_fabricWorkspaceProvisioner.globalvariable.policyCache
+kind: GlobalVariableComponent
+defaultValue: null

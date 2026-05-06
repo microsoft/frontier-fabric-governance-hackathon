@@ -1,0 +1,59 @@
+mcs.metadata:
+  componentName: Submit Workspace Request
+  description: |-
+    Description: Calls the "FWG - Submit Workspace Request" Power Automate cloud
+                 flow. The flow uses the GitHub connector to:
+                   1. Branch from main: request/<workspaceName>-<timestamp>
+                   2. Create workspaces/<workspaceName>.yaml with the manifest body
+                   3. Open a pull request titled "Request workspace <name>"
+                 Returns the PR URL and number to the agent.
+kind: TaskDialog
+inputs:
+  - kind: ManualTaskInput
+    propertyName: workspaceName
+    description: |-
+      The composed Fabric workspace name. Used as the file basename
+      (workspaces/<workspaceName>.yaml) and in the PR title and branch name.
+
+  - kind: ManualTaskInput
+    propertyName: yamlBody
+    description: |-
+      The full YAML body of the manifest, already formatted by the calling
+      topic. The flow writes it verbatim — it does not parse or transform.
+
+  - kind: ManualTaskInput
+    propertyName: requesterEmail
+    description: |-
+      Email of the user who initiated the request, captured by the agent
+      from authenticated context (User.PrincipalName) or asked. Embedded in
+      the PR description for traceability.
+
+modelDisplayName: Submit Workspace Request
+modelDescription: |
+  Submits a fully composed workspace manifest by opening a pull request on
+  the governance repository. Only call after the request topic has finished
+  collecting and pre-validating every required field.
+outputs:
+  - propertyName: pullRequestUrl
+
+  - propertyName: pullRequestNumber
+
+  - propertyName: branch
+
+  - propertyName: submitted
+
+  - propertyName: error
+
+action:
+  kind: InvokeFlowTaskAction
+
+outputMode: All
+mcs.metadata:
+  componentName: Submit Workspace Request
+  description: |-
+    Opens a governance pull request for a new Fabric workspace by branching
+    main, committing workspaces/<name>.yaml, and creating a PR via the
+    GitHub Power Automate connector. The repository's existing
+    .github/workflows/validate.yml workflow then runs scripts/validate.py on
+    the PR — that workflow is the single source of truth for policy
+    enforcement.

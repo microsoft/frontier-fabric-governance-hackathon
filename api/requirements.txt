@@ -1,0 +1,7 @@
+azure-functions>=1.21.0
+PyYAML>=6.0.2
+jsonschema>=4.23.0
+requests>=2.32.3
+PyJWT[crypto]>=2.9.0
+azure-identity>=1.17.1
+azure-keyvault-secrets>=4.8.0

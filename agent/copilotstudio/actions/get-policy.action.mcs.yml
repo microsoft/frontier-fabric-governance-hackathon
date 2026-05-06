@@ -1,0 +1,37 @@
+mcs.metadata:
+  componentName: Get Policy
+  description: |-
+    Description: Calls the "FWG - Get Policy" Power Automate cloud flow, which
+                 fetches rules/policy.yaml from the governance repo via the
+                 GitHub connector and returns the four allow-lists as
+                 comma-separated strings. Replaces the old custom-connector
+                 call to /api/policy.
+kind: TaskDialog
+modelDisplayName: Get Policy
+modelDescription: |
+  Look up the four governance allow-lists (allowed Azure regions, approved
+  Fabric capacities, approved domain prefixes, approved sub-domain prefixes).
+  Use whenever the user asks "what is allowed", "what regions can I pick",
+  "show me the policy", or before opening a workspace request.
+outputs:
+  - propertyName: regions
+
+  - propertyName: capacities
+
+  - propertyName: approvedDomains
+
+  - propertyName: approvedSubDomains
+
+  - propertyName: policyVersion
+
+action:
+  kind: InvokeFlowTaskAction
+
+outputMode: All
+mcs.metadata:
+  componentName: Get Policy
+  description: |-
+    Returns the current governance allow-lists (regions, capacities, approved
+    domains, approved sub-domains) by reading rules/policy.yaml from the
+    governance repository via the GitHub Power Automate connector. No backend
+    HTTP service is involved.

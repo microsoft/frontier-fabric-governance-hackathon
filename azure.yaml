@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: fabric-workspace-governance
+metadata:
+  template: fabric-workspace-governance@1.0.0
+# IaC: Terraform. (Bicep equivalent kept under infra/bicep/ for reference.)
+# Requires: `azd config set alpha.terraform on` once per machine, plus the
+# Terraform CLI on PATH. See infra/terraform/README.md for migration steps.
+infra:
+  provider: terraform
+  path: infra/terraform
+  module: main
+services:
+  api:
+    project: ./api
+    language: python
+    host: function
+    hooks:
+      # Mirror the canonical schema/policy + rules_engine into api/ so the
+      # deployed Function package has them flat next to function_app.py.
+      # We also commit the mirrored copies to api/ as a belt-and-braces
+      # measure in case this hook is skipped (some azd flows don't fire it).
+      prepackage:
+        posix:
+          shell: sh
+          run: |
+            set -e
+            cp -f ../scripts/rules_engine.py ./rules_engine.py
+            cp -f ../schemas/workspace.schema.json ./workspace.schema.json
+            cp -f ../rules/policy.yaml ./policy.yaml
+        windows:
+          shell: pwsh
+          run: |
+            Copy-Item -Path ../scripts/rules_engine.py -Destination ./rules_engine.py -Force
+            Copy-Item -Path ../schemas/workspace.schema.json -Destination ./workspace.schema.json -Force
+            Copy-Item -Path ../rules/policy.yaml -Destination ./policy.yaml -Force

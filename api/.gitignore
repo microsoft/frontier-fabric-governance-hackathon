@@ -1,0 +1,13 @@
+# local.settings.json holds secrets; never commit it
+local.settings.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Functions
+.python_packages/
+bin/
+obj/

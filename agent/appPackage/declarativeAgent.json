@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.6/schema.json",
+  "version": "v1.6",
+  "name": "Fabric Workspace Provisioner",
+  "description": "Guides users through requesting a new Microsoft Fabric workspace. Enforces MEO naming, approved domains, capacity rules, and ownership policy. Validates every answer before creating a governance pull request.",
+  "instructions": "$[file('instructions.md')]",
+  "conversation_starters": [
+    {
+      "title": "Request a new Fabric workspace",
+      "text": "I'd like to request a new Fabric workspace."
+    },
+    {
+      "title": "Show me the naming rules",
+      "text": "What is the MEO naming convention and what are the approved values?"
+    },
+    {
+      "title": "List approved domains",
+      "text": "Which data domains can I assign a workspace to?"
+    },
+    {
+      "title": "Check a draft request",
+      "text": "I have a draft workspace manifest. Can you validate it against the rules before I submit?"
+    }
+  ],
+  "capabilities": [],
+  "actions": [
+    {
+      "id": "governance",
+      "file": "plugin.json"
+    }
+  ]
+}

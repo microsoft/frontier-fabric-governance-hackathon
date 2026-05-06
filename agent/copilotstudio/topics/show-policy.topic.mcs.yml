@@ -1,0 +1,56 @@
+mcs.metadata:
+  componentName: Show Policy
+  description: |-
+    Calls the "FWG - Get Policy" Power Automate flow to fetch the live
+    governance allow-lists from rules/policy.yaml in the governance repo,
+    caches them in a conversation-scoped variable, and renders them.
+    No Azure Function App involved.
+
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Show Policy
+    triggerQueries:
+      - what regions are allowed
+      - which capacities can I use
+      - what domains are approved
+      - what sub-domains are approved
+      - show me the governance allow-lists
+      - what is allowed
+
+  actions:
+    - kind: SendActivity
+      id: sendMessage_pol001
+      activity: Looking up the live governance allow-lists from `rules/policy.yaml`…
+
+    - kind: InvokeFlowAction
+      id: getPolicy_pol002
+      flowId: <TODO-flowId-after-portal-add>
+      input:
+        kind: ManualInputBinding
+      output:
+        kind: SingleVariableOutputBinding
+        variable: Topic.Policy
+
+    - kind: SetVariable
+      id: cachePolicy_pol003
+      variable: Global.PolicyCache
+      value: =Topic.Policy
+
+    - kind: SendActivity
+      id: sendMessage_pol004
+      activity: |-
+        Here are the current governance allow-lists (sourced from
+        `rules/policy.yaml`, version `{Topic.Policy.policyVersion}`):
+
+        **Regions**: {Topic.Policy.regions}
+
+        **Capacities**: {Topic.Policy.capacities}
+
+        **Domains**: {Topic.Policy.approvedDomains}
+
+        **Sub-domains**: {Topic.Policy.approvedSubDomains}
+
+        Want to start a workspace request now?
