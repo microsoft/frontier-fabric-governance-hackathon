@@ -1,0 +1,31 @@
+mcs.metadata:
+  componentName: Knowledge Search
+  description: |-
+    Fallback over governance documentation when the user asks "how does this
+    work" / "what is X" type questions. Generative answers from the configured
+    knowledge sources.
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnUnknownIntent
+  id: main
+  priority: -1
+  actions:
+    - kind: CreateSearchQuery
+      id: createSearchQuery_kbs001
+      userInput: =System.Activity.Text
+      result: Topic.SearchQuery
+
+    - kind: SearchAndSummarizeContent
+      id: searchContent_kbs002
+      variable: Topic.Answer
+      userInput: =Topic.SearchQuery.SearchQuery
+
+    - kind: ConditionGroup
+      id: conditionGroup_kbs003
+      conditions:
+        - id: conditionItem_kbs004
+          condition: =!IsBlank(Topic.Answer)
+          actions:
+            - kind: EndDialog
+              id: endDialog_kbs005
+              clearTopicQueue: true

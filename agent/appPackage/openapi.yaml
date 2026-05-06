@@ -1,0 +1,246 @@
+openapi: 3.0.3
+info:
+  title: Fabric Workspace Governance API
+  description: >
+    Backend for the Fabric Workspace Provisioner M365 declarative agent.
+    Re-uses the same rule engine that gates governance pull requests so the
+    agent's pre-flight validation can never drift from the PR check.
+  version: 1.0.0
+servers:
+  - url: https://fwg-func-rynra7bb2ogjk.azurewebsites.net/api
+    description: Azure Functions backend
+paths:
+  /policy:
+    get:
+      operationId: getPolicy
+      summary: Get the list of approved values used to compose a workspace request.
+      responses:
+        "200":
+          description: Approved values
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyResponse"
+
+  /validate:
+    post:
+      operationId: validateWorkspace
+      summary: Validate a draft workspace manifest. No side effects.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceManifest"
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+
+  /submit:
+    post:
+      operationId: submitWorkspace
+      summary: Validate and open a governance pull request for a workspace request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceManifest"
+      responses:
+        "200":
+          description: Pull request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitResult"
+        "400":
+          description: Validation failed; no PR was created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitResult"
+
+components:
+  schemas:
+    Owner:
+      type: object
+      required: [displayName, email, type, role]
+      properties:
+        displayName:
+          type: string
+          description: Display name of the user or group.
+        email:
+          type: string
+          format: email
+          description: Corporate email or group address. Personal domains are rejected.
+        type:
+          type: string
+          enum: [User, Group]
+        role:
+          type: string
+          enum: [Admin, Member, Contributor]
+
+    WorkspaceManifest:
+      type: object
+      required:
+        - name
+        - country
+        - area
+        - subject
+        - dataProductType
+        - environment
+        - domain
+        - subDomain
+        - description
+        - capacity
+        - region
+        - sensitivityLabel
+        - costCenter
+        - owners
+      properties:
+        name:
+          type: string
+          description: MEO 6-segment name, lowercase. Pattern country-area-subject-dataProductType-environment-suffix.
+          pattern: "^[a-z]{2}-[a-z]{2,4}-[a-z]{2,8}-(brz|slv|gld|ndf)-(poc|dev|sit|uat|stg|prd)-[a-z0-9]{1,6}$"
+        country:
+          type: string
+          description: ISO two-letter country code, lowercase.
+          pattern: "^[a-z]{2}$"
+        area:
+          type: string
+          pattern: "^[a-z]{2,4}$"
+        subject:
+          type: string
+          pattern: "^[a-z]{2,8}$"
+        dataProductType:
+          type: string
+          enum: [brz, slv, gld, ndf]
+        environment:
+          type: string
+          enum: [poc, dev, sit, uat, stg, prd]
+        domain:
+          type: string
+          description: Must be one of approvedDomains from /policy.
+        subDomain:
+          type: string
+          pattern: "^[a-z0-9-]{2,32}$"
+        description:
+          type: string
+          minLength: 30
+          maxLength: 500
+        capacity:
+          type: string
+          description: Must be a key of approvedCapacities from /policy.
+        region:
+          type: string
+        sensitivityLabel:
+          type: string
+        costCenter:
+          type: string
+        owners:
+          type: array
+          minItems: 2
+          items:
+            $ref: "#/components/schemas/Owner"
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+
+    Finding:
+      type: object
+      required: [rule_id, severity, message]
+      properties:
+        rule_id:
+          type: string
+        severity:
+          type: string
+          enum: [block, warn, info]
+        message:
+          type: string
+
+    ValidationResult:
+      type: object
+      required: [passed, findings, blockingCount, warningCount]
+      properties:
+        passed:
+          type: boolean
+        blockingCount:
+          type: integer
+        warningCount:
+          type: integer
+        findings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Finding"
+
+    SubmitResult:
+      type: object
+      required: [passed, submitted]
+      properties:
+        passed:
+          type: boolean
+        submitted:
+          type: boolean
+        pullRequestUrl:
+          type: string
+        pullRequestNumber:
+          type: integer
+        branch:
+          type: string
+        message:
+          type: string
+        error:
+          type: string
+        findings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Finding"
+
+    Capacity:
+      type: object
+      properties:
+        name:
+          type: string
+        region:
+          type: string
+        allowedEnvironments:
+          type: array
+          items:
+            type: string
+
+    PolicyResponse:
+      type: object
+      properties:
+        approvedCountries:
+          type: array
+          items: { type: string }
+        approvedAreas:
+          type: array
+          items: { type: string }
+        approvedSubjects:
+          type: array
+          items: { type: string }
+        approvedDomains:
+          type: array
+          items: { type: string }
+        approvedSensitivityLabels:
+          type: array
+          items: { type: string }
+        approvedCostCenters:
+          type: array
+          items: { type: string }
+        environments:
+          type: array
+          items: { type: string }
+        dataProductTypes:
+          type: array
+          items: { type: string }
+        approvedCapacities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Capacity"

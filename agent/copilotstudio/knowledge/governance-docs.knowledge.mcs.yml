@@ -1,0 +1,41 @@
+# Knowledge source: governance docs.
+#
+# This is a SCAFFOLD. Knowledge sources in Copilot Studio are normally
+# created in the portal (`Knowledge` tab) so they can be linked to the
+# correct Dataverse environment. Two viable options for this project:
+#
+# Option 1 — File knowledge (RECOMMENDED for a private repo)
+#   Upload these files in the portal (Knowledge → + Add knowledge → Files):
+#     - rules/policy.yaml
+#     - docs/setup.md
+#     - docs/workspace-approval-workflow.md
+#     - schemas/workspace.schema.json
+#   The grounded answers cover *why* the policy is what it is and how the
+#   approval flow works. Combine with the deterministic "Show Policy" topic
+#   (which calls the FWG - Get Policy flow) for the four canonical
+#   allow-lists.
+#
+# Option 2 — Public site search (only if the repo is public)
+#   Point at the rendered docs site or the GitHub Pages URL. PublicSite
+#   crawls only 2 levels below the start URL, so anchor it at the docs/
+#   index page rather than the repo root.
+#
+# When you pick one, use the portal to add it; the plugin's `pull` will
+# emit the real YAML into this file.
+
+mcs.metadata:
+  componentName: Governance docs
+  description: |-
+    Grounding source for "what does the approval flow look like", "why is
+    region X not in the list", and other policy / process questions. Does
+    NOT replace the Show Policy topic for the canonical allow-lists.
+
+# Placeholder shape — replace after portal-side knowledge add + plugin pull.
+kind: KnowledgeSource
+sources:
+  - kind: FileKnowledgeSource
+    files:
+      - <TODO-file-id-policy-yaml>
+      - <TODO-file-id-setup-md>
+      - <TODO-file-id-approval-workflow-md>
+      - <TODO-file-id-workspace-schema-json>

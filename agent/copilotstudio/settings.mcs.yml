@@ -1,0 +1,15 @@
+# settings.mcs.yml is normally created by the Copilot Studio portal when an
+# agent is first published, then pulled down by the VS Code extension.
+#
+# The plugin's `manage clone` flow will replace this file with the real one,
+# substituting an actual schemaName prefix (e.g. cr1xx_fabricWorkspaceProvisioner).
+#
+# This stub records the intent — keep it until you clone an empty agent shell
+# from the portal.
+#
+# TODO: replace `crXXX_fabricWorkspaceProvisioner` with the real schemaName
+# once the agent has been created in the Copilot Studio portal.
+kind: BotComponentSettings
+schemaName: crXXX_fabricWorkspaceProvisioner
+generativeActionsEnabled: true
+generativeAnswersEnabled: true

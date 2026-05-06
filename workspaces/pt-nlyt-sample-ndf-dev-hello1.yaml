@@ -1,15 +1,22 @@
-name: dev-plt-sample-hello
+name: pt-nlyt-sample-ndf-dev-hello1
+country: pt
+area: nlyt
+subject: sample
+dataProductType: ndf
 environment: dev
+suffix: hello1
+domain: dom-ops-dat
+subDomain: sdm-nlyt-smpl
 description: "Sample workspace created via PR-based governance to validate the end-to-end approval and provisioning workflow."
 capacity: frteix-f2-northeurope
 region: northeurope
-domain: Platform
 sensitivityLabel: General
 costCenter: CC-1001
 owners:
   - principalType: Group
     identifier: 4add5496-18af-4d7b-b095-58eba1fa2dc3   # sg-fabric-workspace-provisioner
     role: Admin
+    groupName: grp_fabric_dev_nlyt_admin
   - principalType: User
     identifier: e122d065-3015-45cb-941a-37c91f505607   # frteix@microsoft.com (guest)
     role: Member

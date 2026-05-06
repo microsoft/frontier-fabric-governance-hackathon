@@ -1,0 +1,82 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.4/schema.json",
+  "schema_version": "v2.4",
+  "name_for_human": "Fabric Workspace Governance",
+  "description_for_human": "Validate and submit Microsoft Fabric workspace requests against MEO governance policy.",
+  "namespace": "fabricWorkspaceGovernance",
+  "capabilities": {
+    "localization": {}
+  },
+  "functions": [
+    {
+      "name": "getPolicy",
+      "description": "Returns the lists of approved countries, areas, subjects, domains, capacities, environments, sensitivity labels, and cost centres that the agent must use when guiding the user.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "static_template": {
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.5",
+            "body": [
+              { "type": "TextBlock", "text": "Approved values loaded.", "weight": "Bolder" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "validateWorkspace",
+      "description": "Validates a draft workspace manifest against the JSON schema and the MEO governance rules. Returns blocking and warning findings. Does not create any pull request.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "static_template": {
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.5",
+            "body": [
+              { "type": "TextBlock", "text": "Validation result", "weight": "Bolder" },
+              { "type": "TextBlock", "text": "Passed: ${passed}" },
+              { "type": "TextBlock", "text": "Blocking: ${blockingCount} | Warnings: ${warningCount}" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "submitWorkspace",
+      "description": "Submits a validated workspace manifest by opening a governance pull request in GitHub. Re-runs server-side validation first; refuses if blocking findings remain. Returns the pull request URL on success.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "static_template": {
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.5",
+            "body": [
+              { "type": "TextBlock", "text": "Pull request opened", "weight": "Bolder" },
+              { "type": "TextBlock", "text": "${pullRequestUrl}" }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "runtimes": [
+    {
+      "type": "OpenApi",
+      "auth": {
+        "type": "None"
+      },
+      "spec": {
+        "url": "openapi.yaml"
+      },
+      "run_for_functions": [
+        "getPolicy",
+        "validateWorkspace",
+        "submitWorkspace"
+      ]
+    }
+  ]
+}

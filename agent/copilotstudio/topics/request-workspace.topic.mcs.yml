@@ -1,0 +1,299 @@
+mcs.metadata:
+  componentName: Request Workspace
+  description: |-
+    Multi-turn slot-fill of the Fabric workspace manifest. After collection,
+    runs lightweight Power Fx pre-flight checks (regex, enum, length) for
+    immediate feedback, then composes a YAML body and calls the
+    "FWG - Submit Workspace Request" Power Automate flow, which opens the
+    governance pull request via the GitHub connector. The deterministic
+    enforcement gate is the existing .github/workflows/validate.yml PR
+    check — Power Fx pre-flight is a UX nicety, not the source of truth.
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Request Workspace
+    triggerQueries:
+      - request a new workspace
+      - I need a Fabric workspace
+      - create a Fabric workspace
+      - new fabric workspace
+      - workspace request
+      - provision a workspace
+
+  actions:
+    - kind: SendActivity
+      id: sendMessage_req001
+      activity: |-
+        Let's prepare a new workspace request. I'll collect the required
+        fields, run a quick sanity check, and open a governance pull
+        request for review. Say "show me what's allowed" any time to see
+        the live allow-lists.
+
+    # ---------- 1. Slot-fill ----------
+
+    - kind: Question
+      id: q_country_req002
+      alwaysPrompt: true
+      variable: init:Topic.Country
+      prompt: What is the **country** code? Two lowercase letters (e.g. `pt`, `de`, `uk`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_area_req003
+      alwaysPrompt: true
+      variable: init:Topic.Area
+      prompt: |-
+        What is the **area** code? 2-4 lowercase letters identifying the
+        accountable area (e.g. `fin`, `mkt`, `ops`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_subject_req004
+      alwaysPrompt: true
+      variable: init:Topic.Subject
+      prompt: |-
+        What is the **subject**? Up to 8 lowercase letters describing the
+        data product (e.g. `revenue`, `sales`, `hrops`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_dpt_req005
+      alwaysPrompt: true
+      variable: init:Topic.DataProductType
+      prompt: |-
+        Which **data product type**? One of: `brz`, `slv`, `gld`, `ndf`.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_env_req006
+      alwaysPrompt: true
+      variable: init:Topic.Environment
+      prompt: "Which **environment**? One of: `poc`, `dev`, `sit`, `uat`, `stg`, `prd`."
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_suffix_req007
+      alwaysPrompt: true
+      variable: init:Topic.Suffix
+      prompt: |-
+        Pick a **unique suffix** (1-6 lowercase alphanumeric chars, e.g.
+        `001`, `kp01`).
+      entity: StringPrebuiltEntity
+
+    - kind: SetVariable
+      id: setName_req008
+      variable: Topic.Name
+      value: =Concatenate(Topic.Country, "-", Topic.Area, "-", Topic.Subject, "-", Topic.DataProductType, "-", Topic.Environment, "-", Topic.Suffix)
+
+    - kind: SendActivity
+      id: confirmName_req009
+      activity: "Composed workspace name: **{Topic.Name}**"
+
+    - kind: Question
+      id: q_domain_req010
+      alwaysPrompt: true
+      variable: init:Topic.Domain
+      prompt: |-
+        Which **Fabric domain**? Pattern `dom-<area>-<suffix>` (e.g.
+        `dom-fin-rev01`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_subdomain_req011
+      alwaysPrompt: true
+      variable: init:Topic.SubDomain
+      prompt: |-
+        Which **Fabric sub-domain**? Pattern `sdm-<area>-<suffix>` (e.g.
+        `sdm-fin-rev01`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_capacity_req012
+      alwaysPrompt: true
+      variable: init:Topic.Capacity
+      prompt: |-
+        Which **capacity**? Must be a key from the approved-capacities
+        allow-list. Say "show me what's allowed" to see the list.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_region_req013
+      alwaysPrompt: true
+      variable: init:Topic.Region
+      prompt: |-
+        Which **Azure region**? One of `northeurope`, `westeurope`, `eastus`,
+        `westus`, `uksouth`.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_sensitivity_req014
+      alwaysPrompt: true
+      variable: init:Topic.SensitivityLabel
+      prompt: |-
+        Which **sensitivity label**? One of `Public`, `General`,
+        `Confidential`, `Highly Confidential`.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_costcenter_req015
+      alwaysPrompt: true
+      variable: init:Topic.CostCenter
+      prompt: |-
+        What is the **cost centre**? Pattern `CC-` followed by 4-6 digits
+        (e.g. `CC-12345`).
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_description_req016
+      alwaysPrompt: true
+      variable: init:Topic.Description
+      prompt: |-
+        Briefly **describe** the workspace and the data product it will host.
+        Minimum 30 characters, maximum 500.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: q_owners_req017
+      alwaysPrompt: true
+      variable: init:Topic.OwnersJson
+      prompt: |-
+        Provide the **owners** as a JSON array (at least 2, with at least one
+        Admin). Example:
+
+        ```
+        [
+          {"displayName":"Fabric Admin Group","email":"grp_fabric_dev_fin_admin@contoso.com","type":"Group","role":"Admin"},
+          {"displayName":"Jane Smith","email":"jane.smith@contoso.com","type":"User","role":"Member"}
+        ]
+        ```
+
+        Paste your JSON now.
+      entity: StringPrebuiltEntity
+
+    # ---------- 2. Power Fx pre-flight (UX feedback only) ----------
+    #
+    # The deterministic gate is .github/workflows/validate.yml on the PR.
+    # These checks just catch obvious typos before we open the PR.
+
+    - kind: SetVariable
+      id: precheck_req018a
+      variable: Topic.PreflightErrors
+      value: |-
+        =Trim(Concatenate(
+          If(IsMatch(Topic.Country, "^[a-z]{2}$"), "", "- country must be 2 lowercase letters" & Char(10)),
+          If(IsMatch(Topic.Area, "^[a-z]{2,4}$"), "", "- area must be 2-4 lowercase letters" & Char(10)),
+          If(IsMatch(Topic.Subject, "^[a-z]{1,8}$"), "", "- subject must be up to 8 lowercase letters" & Char(10)),
+          If(Topic.DataProductType in ["brz","slv","gld","ndf"], "", "- dataProductType must be brz | slv | gld | ndf" & Char(10)),
+          If(Topic.Environment in ["poc","dev","sit","uat","stg","prd"], "", "- environment must be poc | dev | sit | uat | stg | prd" & Char(10)),
+          If(IsMatch(Topic.Suffix, "^[a-z0-9]{1,6}$"), "", "- suffix must be 1-6 lowercase alphanumeric chars" & Char(10)),
+          If(IsMatch(Topic.Domain, "^dom-[a-z]{2,4}-[a-z0-9]{1,8}$"), "", "- domain must match dom-<area>-<suffix>" & Char(10)),
+          If(IsMatch(Topic.SubDomain, "^sdm-[a-z]{2,4}-[a-z0-9]{1,8}$"), "", "- subDomain must match sdm-<area>-<suffix>" & Char(10)),
+          If(Topic.Region in ["northeurope","westeurope","eastus","westus","uksouth"], "", "- region not in the allow-list" & Char(10)),
+          If(Topic.SensitivityLabel in ["Public","General","Confidential","Highly Confidential"], "", "- sensitivityLabel not in the allow-list" & Char(10)),
+          If(IsMatch(Topic.CostCenter, "^CC-\d{4,6}$"), "", "- costCenter must match CC-<4-6 digits>" & Char(10)),
+          If(Len(Topic.Description) >= 30 And Len(Topic.Description) <= 500, "", "- description must be 30-500 chars" & Char(10))
+        ))
+
+    - kind: ConditionGroup
+      id: branchPreflight_req018b
+      conditions:
+        - id: condPrefail_req018c
+          condition: =Len(Topic.PreflightErrors) > 0
+          actions:
+            - kind: SendActivity
+              id: sendMessage_req018d
+              activity: |-
+                I spotted some issues before opening the PR. Please re-start
+                the request with corrected values:
+
+                {Topic.PreflightErrors}
+
+                Note: this is a quick local check. The repository's
+                `validate.yml` workflow runs the full rules engine on the
+                PR and is the authoritative gate.
+
+            - kind: EndDialog
+              id: end_req018e
+              clearTopicQueue: true
+
+    # ---------- 3. Compose YAML body ----------
+    #
+    # Power Automate flows can't accept Object inputs (only String / Number /
+    # Boolean), so we build the YAML body here and pass it as a single text
+    # parameter. The flow writes it verbatim into workspaces/<name>.yaml.
+
+    - kind: SetVariable
+      id: assembleYaml_req018
+      variable: Topic.YamlBody
+      value: |-
+        =Concatenate(
+          "name: ", Topic.Name, Char(10),
+          "country: ", Topic.Country, Char(10),
+          "area: ", Topic.Area, Char(10),
+          "subject: ", Topic.Subject, Char(10),
+          "dataProductType: ", Topic.DataProductType, Char(10),
+          "environment: ", Topic.Environment, Char(10),
+          "suffix: ", Topic.Suffix, Char(10),
+          "domain: ", Topic.Domain, Char(10),
+          "subDomain: ", Topic.SubDomain, Char(10),
+          "description: |", Char(10),
+          "  ", Substitute(Topic.Description, Char(10), Char(10) & "  "), Char(10),
+          "capacity: ", Topic.Capacity, Char(10),
+          "sensitivityLabel: ", """", Topic.SensitivityLabel, """", Char(10),
+          "costCenter: ", Topic.CostCenter, Char(10),
+          "region: ", Topic.Region, Char(10),
+          "owners:", Char(10),
+          "  # owners block injected from JSON below", Char(10),
+          "ownersJsonRaw: '", Substitute(Topic.OwnersJson, "'", "''"), "'", Char(10)
+        )
+
+    # NOTE: The flow expands ownersJsonRaw (a JSON string) into a proper YAML
+    # `owners:` block before committing. Keeping that translation in the
+    # flow avoids a complex Power Fx loop here.
+
+    # ---------- 4. Submit ----------
+
+    - kind: SendActivity
+      id: sendMessage_req019
+      activity: Opening the governance pull request via the GitHub connector…
+
+    - kind: InvokeFlowAction
+      id: submit_req020
+      flowId: <TODO-flowId-after-portal-add>
+      input:
+        kind: ManualInputBinding
+      output:
+        kind: SingleVariableOutputBinding
+        variable: Topic.SubmitResult
+
+    - kind: ConditionGroup
+      id: branchSubmit_req021
+      conditions:
+        - id: condSubmitOk_req022
+          condition: =Topic.SubmitResult.submitted = true
+          actions:
+            - kind: SendActivity
+              id: sendMessage_req023
+              activity: |-
+                Pull request opened: {Topic.SubmitResult.pullRequestUrl}
+
+                Branch: `{Topic.SubmitResult.branch}` (PR #{Topic.SubmitResult.pullRequestNumber}).
+
+                The repo's `validate.yml` workflow will now run the rules
+                engine on your manifest. Watch the PR checks — fix any
+                blocking findings, then ask a governance reviewer to
+                approve. On merge, `provision.yml` creates the workspace
+                in Fabric.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendMessage_req024
+          activity: |-
+            Submission failed.
+
+            Error: {Topic.SubmitResult.error}
+
+            Please retry, or open the PR manually as described in the repo
+            README ("Option B").
