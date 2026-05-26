@@ -50,7 +50,9 @@
                                   6. PR closed, audit log entry
 ```
 
-### 1.1.1 v1
+### 1.1.1 v1 — items, domains, capacities, labels
+
+> Diagram: same v0 skeleton, but provision step now branches into 'workspace' and 'items'; new domains/ and capacities/ feed the validator.
 
 ```
 
@@ -61,6 +63,16 @@
   rules/policy.yaml ─┘                          └─► write managed-by marker
 
 ```
+
+### 1.1.2 Next releases
+
+- **v2 — RBAC lifecycle and access reviews**
+  - Simple timeline. Day 0 — bind. Day 60 — warning. Day 90 — expiry PR auto-opens. Day 91 — binding removed.
+- **v3 — medallion bootstrap & data agent governance**
+  - Fabric Skills earned the strategy bet - `medallion/` manifest kind
+- **v4 — audit, observability, deployment pipelines**
+  - GitHub webhooks + Fabric activity → Eventstream → Eventhouse → Power BI dashboard → Activator alerts
+
 
 ### 1.2 Tenant-setting prerequisites
 
