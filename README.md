@@ -90,6 +90,11 @@ The full prerequisite checklist lives in [`challenges/00-setup/challenge.md`](ch
 4. Pick one or more of **Challenges 02–08** based on your team's interests.
 5. Finish with the **Capstone**: a single PR that exercises every challenge you completed.
 
+> **Facilitators / coaches / customer-engagement leads:** start from
+> [`docs/delivery-guide.md`](docs/delivery-guide.md) for pre-flight checklists,
+> sample agendas, per-challenge coaching cards, judging logistics, and the
+> PR-driven model for evolving the blueprint after each delivery.
+
 Each challenge folder contains:
 
 - `challenge.md` — the lab instructions (scenario, objectives, prereqs, tasks,
@@ -106,6 +111,7 @@ Each challenge folder contains:
 ├── README.original.md              ← the pre-hackathon README, kept for reference
 ├── docs/                           ← cross-challenge reference material
 │   ├── setup.md                    ← one-time operator runbook
+│   ├── delivery-guide.md           ← facilitator runbook (agendas, coaching, retro)
 │   ├── workspace-approval-workflow.md
 │   ├── mcp-and-skills.md           ← Fabric MCP + Skills install & usage
 │   ├── identity-model.md           ← OIDC, federated credentials, SPN scopes
