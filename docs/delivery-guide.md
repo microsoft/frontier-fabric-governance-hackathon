@@ -451,6 +451,7 @@ Drop these into your feedback form verbatim if useful:
 ## 10. References
 
 - [`README.md`](../README.md) — project front door and learning-path diagram
+- [`docs/challenges-overview.md`](challenges-overview.md) — customer-facing visual tour of the 10 challenges
 - [`docs/setup.md`](setup.md) — one-time operator runbook
 - [`docs/identity-model.md`](identity-model.md) — OIDC, federated credentials, SPN scopes
 - [`docs/mcp-and-skills.md`](mcp-and-skills.md) — Fabric MCP + Skills install and usage
