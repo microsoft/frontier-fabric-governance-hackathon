@@ -93,7 +93,9 @@ The full prerequisite checklist lives in [`challenges/00-setup/challenge.md`](ch
 > **Facilitators / coaches / customer-engagement leads:** start from
 > [`docs/delivery-guide.md`](docs/delivery-guide.md) for pre-flight checklists,
 > sample agendas, per-challenge coaching cards, judging logistics, and the
-> PR-driven model for evolving the blueprint after each delivery.
+> PR-driven model for evolving the blueprint after each delivery. For a
+> customer-facing visual tour of the 10 challenges, share
+> [`docs/challenges-overview.md`](docs/challenges-overview.md).
 
 Each challenge folder contains:
 
@@ -112,6 +114,7 @@ Each challenge folder contains:
 ├── docs/                           ← cross-challenge reference material
 │   ├── setup.md                    ← one-time operator runbook
 │   ├── delivery-guide.md           ← facilitator runbook (agendas, coaching, retro)
+│   ├── challenges-overview.md      ← customer-facing visual tour of the 10 challenges
 │   ├── workspace-approval-workflow.md
 │   ├── mcp-and-skills.md           ← Fabric MCP + Skills install & usage
 │   ├── identity-model.md           ← OIDC, federated credentials, SPN scopes
