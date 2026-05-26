@@ -1,5 +1,10 @@
 # Microsoft Fabric — PR-Based Workspace Creation Approval Workflow
 
+> **Hackathon note:** this is the **design reference** for **Challenge 01 —
+> Workspace as code**. If you're a hackathon participant, start with the
+> lab instructions in [`../challenges/01-workspace-as-code/challenge.md`](../challenges/01-workspace-as-code/challenge.md)
+> and use this document for deeper background.
+
 > **Status:** Reference design • **Audience:** Platform / Governance / Data Engineering teams
 > **Goal:** Treat Fabric workspaces as **declarative infrastructure**. No workspace exists in the tenant unless a YAML manifest for it exists in `main` of this repo, was reviewed via PR, and was provisioned by a service principal through GitHub Actions.
 
