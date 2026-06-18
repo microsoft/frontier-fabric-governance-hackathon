@@ -68,8 +68,8 @@ gh copilot mcp add fabric \
 
 ```
 List all my Fabric workspaces.
-Show the role assignments for the workspace called "dev-plt-sample-hello".
-What lakehouses exist in "dev-plt-sample-hello"?
+Show the role assignments for the workspace called "pt-nlyt-sample-ndf-dev-hello1".
+What lakehouses exist in "pt-nlyt-sample-ndf-dev-hello1"?
 Get the definition of the item named "CustomerData" in that workspace.
 ```
 

@@ -31,7 +31,7 @@ variable "github_owner" {
 
 variable "github_repo" {
   type    = string
-  default = "fabric-workspace-governance"
+  default = "frontier-fabric-governance-hackathon"
 }
 
 variable "github_base_branch" {

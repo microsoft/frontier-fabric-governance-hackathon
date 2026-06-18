@@ -101,9 +101,9 @@ Each challenge folder contains:
 
 - `challenge.md` — the lab instructions (scenario, objectives, prereqs, tasks,
   success criteria, stretch goals, MCP + Skills tips, references).
-- `starter/` — manifests, schemas, and scripts you extend.
-- `solution/` — a reference implementation. This is an **enablement** hackathon, not a
-  CTF: peek at the solution if you get stuck.
+- Optional `starter/` — manifests, schemas, and scripts you extend (added per
+  challenge as materials are published).
+- Optional `solution/` — a reference implementation when available.
 
 ## Repo layout
 

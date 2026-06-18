@@ -133,10 +133,10 @@ az storage blob list --account-name fwgstrynra7bb2ogjk --container-name app-pack
 
 ## Files of interest
 
-- [api/function_app.py](api/function_app.py) — HTTP backend
-- [api/shared/github_app.py](api/shared/github_app.py) — GitHub App auth + PR creation
-- [agent/appPackage/manifest.json](agent/appPackage/manifest.json) — Teams manifest
-- [agent/appPackage/openapi.yaml](agent/appPackage/openapi.yaml) — API contract for the plugin
-- [agent/appPackage/instructions.md](agent/appPackage/instructions.md) — agent system prompt
-- [infra/main.bicep](infra/main.bicep) — full IaC
-- [azure.yaml](azure.yaml) — azd service + prepackage hook config
+- [api/function_app.py](../api/function_app.py) — HTTP backend
+- [api/shared/github_app.py](../api/shared/github_app.py) — GitHub App auth + PR creation
+- [agent/appPackage/manifest.json](../agent/appPackage/manifest.json) — Teams manifest
+- [agent/appPackage/openapi.yaml](../agent/appPackage/openapi.yaml) — API contract for the plugin
+- [agent/appPackage/instructions.md](../agent/appPackage/instructions.md) — agent system prompt
+- [infra/bicep/main.bicep](../infra/bicep/main.bicep) — full IaC
+- [azure.yaml](../azure.yaml) — azd service + prepackage hook config

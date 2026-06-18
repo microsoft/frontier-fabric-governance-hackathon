@@ -139,7 +139,7 @@ Pattern: grp_<service>_<environment>_<profile>
 
 ## 5. Gap Analysis vs Current Repo
 
-The existing [fabric-workspace-governance](../) implementation was built before
+The existing implementation in this repository was built before
 these MEO rules were known. The following changes are required to align:
 
 | Area | Current | MEO Required |

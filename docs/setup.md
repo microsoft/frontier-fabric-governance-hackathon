@@ -4,17 +4,17 @@ This runbook captures the **manual** steps required to make this repo functional
 in your tenant. The automation in this repo handles GitHub-side wiring; some
 Fabric tenant settings require Fabric Admin Portal access.
 
-## Identity already provisioned for this tenant
+## Capture your tenant bootstrap values
 
-| Item                   | Value |
-|------------------------|-------|
-| Tenant ID              | `6cf3d520-2c8c-4e6f-b4a7-54827eac42be` |
-| Provisioner App        | `gh-fabric-workspace-provisioner` |
-| App (client) ID        | `ad57fd37-192d-41b0-ad74-73ce420f11bc` |
-| SPN object ID          | `cac92145-75da-4a17-839f-e97c6f552247` |
-| Security group         | `sg-fabric-workspace-provisioner` |
-| Security group ID      | `4add5496-18af-4d7b-b095-58eba1fa2dc3` |
-| Capacity (initial)     | `frteixfabriccp1` (F2, northeurope) |
+| Item | Value |
+|---|---|
+| Tenant ID | `<your-tenant-id>` |
+| Provisioner App | `gh-fabric-workspace-provisioner` (or your chosen app name) |
+| App (client) ID | `<your-app-client-id>` |
+| SPN object ID | `<your-spn-object-id>` |
+| Security group | `sg-fabric-workspace-provisioner` (or your chosen group name) |
+| Security group ID | `<your-security-group-id>` |
+| Capacity (initial) | `<capacity-name>` (`<sku>`, `<region>`) |
 
 ## Required Fabric Admin Portal settings
 
@@ -38,23 +38,24 @@ Microsoft 365 Admin Center → Roles → assign **Fabric Administrator** to the 
 `gh-fabric-workspace-provisioner`. (Required for: list-all-workspaces admin
 endpoints, domain assignment, sensitivity-label operations.)
 
-## Capacity admin (already done by automation)
+## Capacity admin
 
-The SPN object ID has been added to capacity `frteixfabriccp1` administrators
-via ARM. Verify in Azure Portal → Microsoft Fabric → Capacities → Admins.
+Add the SPN object ID to the target capacity administrators via ARM or the
+Azure/Fabric portal. Verify in Azure Portal → Microsoft Fabric → Capacities
+→ Admins.
 
-## GitHub repo configuration (already done by automation)
+## GitHub repo configuration
 
 - Repo variables: `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `FABRIC_CAPACITY_ID`,
   `DEFAULT_OWNER_UPN`, `LIVE_CHECKS`.
-- `production` environment with required reviewer (you).
+- `production` environment with at least one required reviewer.
 - Branch protection on `main`: required PR review, required `validate` check,
   CODEOWNERS review.
 
 ## Day-1 smoke test
 
 1. Branch from `main`.
-2. Add `workspaces/dev-plt-sample-hello.yaml` (sample provided).
+2. Add `workspaces/pt-nlyt-sample-ndf-dev-hello1.yaml` (sample provided).
 3. Open PR — `validate` workflow should post a sticky comment with results.
 4. Approve & merge — `provision` workflow runs (after manual environment approval).
 5. Workspace appears in Fabric.

@@ -39,7 +39,7 @@ By the end of this challenge you will be able to:
 
 ### Task 1 — Reproduce the sample manifest
 
-`workspaces/dev-plt-sample-hello.yaml` already exists. Read it. Then open a PR
+`workspaces/pt-nlyt-sample-ndf-dev-hello1.yaml` already exists. Read it. Then open a PR
 that adds **a second** manifest, e.g. `workspaces/dev-plt-myteam-playground.yaml`,
 following the same shape.
 
@@ -144,7 +144,7 @@ This challenge maps to these files in the repo root:
 - `schemas/workspace.schema.json`
 - `rules/policy.yaml`
 - `scripts/validate.py`, `scripts/provision.py`, `scripts/drift.py`, `scripts/_fabric.py`
-- `workspaces/dev-plt-sample-hello.yaml`
+- `workspaces/pt-nlyt-sample-ndf-dev-hello1.yaml`
 - `.github/workflows/validate.yml`, `provision.yml`, `drift.yml`
 - `.github/CODEOWNERS`, `.github/pull_request_template.md`
 

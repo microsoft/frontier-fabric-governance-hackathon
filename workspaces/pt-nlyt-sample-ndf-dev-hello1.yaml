@@ -21,5 +21,5 @@ owners:
     identifier: e122d065-3015-45cb-941a-37c91f505607   # frteix@microsoft.com (guest)
     role: Member
 tags:
-  managedBy: fabric-workspace-governance
+  managedBy: frontier-fabric-governance-hackathon
   owner: frteix

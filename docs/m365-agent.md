@@ -23,17 +23,17 @@ Three architectural decisions, all locked in:
    - Built-in Microsoft 365 Copilot orchestration, no model hosting.
    - Follows the v1.6 schema: `name`, `description`, `instructions`,
      `conversation_starters`, `actions[]`. See
-     [`agent/appPackage/declarativeAgent.json`](agent/appPackage/declarativeAgent.json).
+     [`agent/appPackage/declarativeAgent.json`](../agent/appPackage/declarativeAgent.json).
    - Tool calls are described in an **API plugin manifest v2.4**
-     ([`plugin.json`](agent/appPackage/plugin.json)) which points at an
-     OpenAPI 3.0 spec ([`openapi.yaml`](agent/appPackage/openapi.yaml)).
+     ([`plugin.json`](../agent/appPackage/plugin.json)) which points at an
+     OpenAPI 3.0 spec ([`openapi.yaml`](../agent/appPackage/openapi.yaml)).
 
 2. **GitHub App + Azure Functions Python v2 backend — not a SPFx web part
    and not a Power Automate flow.**
    - Stateless, easy to scale, easy to lock down with Managed Identity.
    - GitHub App auth (JWT → installation token) gives auditable,
      least-privilege PR creation. See
-     [`api/shared/github_app.py`](api/shared/github_app.py).
+     [`api/shared/github_app.py`](../api/shared/github_app.py).
    - The private key lives in **Key Vault**; the Function reads it through
      **User-Assigned Managed Identity** with the `Key Vault Secrets User` role.
 
@@ -42,14 +42,14 @@ Three architectural decisions, all locked in:
      mistakes are caught early and explained conversationally.
    - The backend re-runs the same checks inside `POST /submit` before opening
      the PR — the agent can never bypass governance.
-   - Both call into [`scripts/rules_engine.py`](scripts/rules_engine.py),
+   - Both call into [`scripts/rules_engine.py`](../scripts/rules_engine.py),
      which is the single source of truth shared with the existing
-     [`scripts/validate.py`](scripts/validate.py) PR check.
+     [`scripts/validate.py`](../scripts/validate.py) PR check.
 
 ## Repository layout
 
 ```
-fabric-workspace-governance/
+frontier-fabric-governance-hackathon/
 ├── agent/appPackage/             # M365 declarative agent package
 │   ├── manifest.json             # Teams app manifest (wraps the agent)
 │   ├── declarativeAgent.json     # v1.6 declarative agent manifest
@@ -119,14 +119,14 @@ Reviewer approves and merges  →  Workspace gets provisioned downstream
 Prereqs: Azure CLI, [`azd`](https://aka.ms/azd), Python 3.11.
 
 ```bash
-cd fabric-workspace-governance
+cd frontier-fabric-governance-hackathon
 azd auth login
 
 azd env new fwg-dev
 azd env set GITHUB_APP_ID            <app-id>
 azd env set GITHUB_INSTALLATION_ID   <installation-id>
 azd env set GITHUB_OWNER             <org>
-azd env set GITHUB_REPO              fabric-workspace-governance
+azd env set GITHUB_REPO              frontier-fabric-governance-hackathon
 
 azd up   # provisions infra + deploys api/
 ```
@@ -157,7 +157,7 @@ curl https://$HOST/api/policy
 ## Packaging the M365 agent
 
 1. Drop `color.png` (192×192) and `outline.png` (32×32) into `agent/appPackage/`
-   (see [`ICONS.md`](agent/appPackage/ICONS.md)).
+   (see [`ICONS.md`](../agent/appPackage/ICONS.md)).
 2. Edit `agent/appPackage/openapi.yaml` and replace the `servers[0].url` with
    `https://<your-function-host>/api`.
 3. Edit `agent/appPackage/manifest.json` and replace the `id` with a new GUID
@@ -186,7 +186,7 @@ without touching the repo.
 ## Verifying that the agent and the PR check stay in sync
 
 Both call `apply_rules()` and `validate_schema()` from
-[`scripts/rules_engine.py`](scripts/rules_engine.py). The `azure.yaml`
+[`scripts/rules_engine.py`](../scripts/rules_engine.py). The `azure.yaml`
 prepackage hook copies `rules_engine.py`, `workspace.schema.json` and
 `policy.yaml` into the Function deployment package, so the Function and the
 CLI run **byte-identical** rule code. To prove it after a change:
